@@ -1,29 +1,52 @@
-BUILD_DIR=build
-BOOTLOADER=$(BUILD_DIR)/bootloader/bootloader.o
-OS=$(BUILD_DIR)/os/os
-DISK_IMG=disk.img
+.POSIX:
+.DELETE_ON_ERROR:
 
-all: bootdisk
+KERNEL_DIR:= kernel
+KERNEL_BIN:= $(KERNEL_BIN)/build/kernel.elf
 
-.PHONY: bootloader os
+BOOT_DIR:= bootloader 
+BOOT_BIN:= $(BOOT_DIR)/build/kernel.elf
 
-bootloader:
+BUILD_DIR:= build
+DISK_IMG:=$(BUILD_DIR)/disk.img
+DISK_IMG_SIZE:=2880
+
+QEMU_FLAGS:=-bios OMVF.fd \
+						-drive if=none,id=uas-disk1,file=${DISK_IMG},format=raw \
+						-device usb-storage,drive=uas-disk1 \
+						-serial stdio \
+						-usb\
+						-vga std \
+						-net none
+
+all: $(DISK_IMG) 
+
+.PHONY: all clean qemu
+
+$(BOOT_BIN):
 	make -C bootloader
 
-os:
-	make -C os
+$(KERNEL_BIN):
+	make -C kernel 
 
-bootdisk:  bootloader os
+$(DISK_IMG): ${BUILD_DIR} ${BOOT_BIN} ${KERNEL_BIN}
 	# @echo "size is $(size)"
 	# @echo "count is $(count)"
-	dd if=/dev/zero of=$(DISK_IMG) bs=512 count=2880
-	dd conv=notrunc if=$(BOOTLOADER) of=$(DISK_IMG) bs=512 count=1 seek=0
-	# dd conv=notrunc if=$(OS) of=$(DISK_IMG) bs=512 count=1 seek=1
-	dd conv=notrunc if=$(OS) of=$(DISK_IMG) bs=512 count=$$(($(shell stat --printf="%s" $(OS))/512)) seek=1
+	dd if=/dev/zero of=$(DISK_IMG) bs=512 count=$(DISK_IMG_SIZE)
+	mformat -i ${DISK_IMG} -f ${DISK_IMG_SIZE} ::
+	mmd -i ${DISK_IMG} ::/EFI
+	mmd -i ${DISK_IMG} ::/EFI/BOOT
+	# Copy the bootloader to the boot partition.
+	mcopy -i ${DISK_IMG} ${BOOT_BIN} ::/efi/boot/bootx64.efi
+	mcopy -i ${DISK_IMG} ${KERNEL_BIN} ::/kernel.elf
+debug:
+	qemu-system-x86_64 -machine q35 -fda $(DISK_IMG) -gdb tcp::26000 -S
 
 qemu:
-	qemu-system-i386 -machine q35 -fda $(DISK_IMG) -gdb tcp::26000 -S
+	qemu-system-x86_64 $(QEMU_FLAGS) $(DISK_IMG) -gdb tcp::26000 -S
 
 clean:
-	make -C bootloader clean
-	make -C os clean
+	make -C $(BOOT_DIR) clean
+	make -C $(KERNEL_DIR) clean
+	rm -f $(DISK_IMG)
+	rm -rf $(BUILD_DIR)
