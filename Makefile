@@ -13,8 +13,7 @@ DISK_IMG_SIZE:=2880
 
 OVMF_PATH := /usr/share/OVMF
 
-QEMU_FLAGS:=-cpu qemu64 \
-						-drive if=pflash,format=raw,unit=0,file=${OVMF_PATH}/OVMF_CODE.fd,readonly=on \
+QEMU_FLAGS:=-drive if=pflash,format=raw,unit=0,file=${OVMF_PATH}/OVMF_CODE.fd,readonly=on \
   					-drive if=pflash,format=raw,unit=1,file=${OVMF_PATH}/OVMF_VARS.fd,\
 						-serial stdio \
 						-usb \
@@ -40,12 +39,15 @@ $(DISK_IMG): ${BUILD_DIR} ${BOOT_BIN} ${KERNEL_BIN}
 	mmd -i ${DISK_IMG} ::/EFI/BOOT
 	# Copy the bootloader to the boot partition.
 	mcopy -i ${DISK_IMG} ${KERNEL_BIN} ::/kernel.elf
-	mcopy -i ${DISK_IMG} ${BOOT_BIN} ::/efi/boot/bootx64.efi
+	mcopy -i ${DISK_IMG} ${BOOT_BIN} ::/efi/boot/BOOTX64.EFI
 debug:
 	qemu-system-x86_64 -machine q35 -fda $(DISK_IMG) -gdb tcp::26000 -S
 
 qemu:
 	qemu-system-x86_64 $(QEMU_FLAGS) $(DISK_IMG) -gdb tcp::26000 -S
+
+${BUILD_DIR}:
+	mkdir -p ${BUILD_DIR}
 
 clean:
 	make -C $(BOOT_DIR) clean

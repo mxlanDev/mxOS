@@ -1,4 +1,4 @@
-set architecture x86_64 
+set architecture i386:x86-64
 layout asm
 layout reg
 set disassembly-flavor intel
