@@ -1,0 +1,30 @@
+[
+  {
+    "arguments": [
+      "/home/mx/opt/cross/bin/x86_64-elf-gcc",
+      "-I/usr/include/efi",
+      "-I/usr/include/efi/x86_64",
+      "-I/usr/include/efi/protocol",
+      "-Iinc",
+      "-ffreestanding",
+      "-fno-common",
+      "-fno-stack-protector",
+      "-fno-stack-check",
+      "-fpic",
+      "-fshort-wchar",
+      "-mno-red-zone",
+      "-Wall",
+      "-Wextra",
+      "-Wmissing-prototypes",
+      "-Wstrict-prototypes",
+      "-DEFI_FUNCTION_WRAPPER",
+      "-c",
+      "-o",
+      "src/obj/main.o",
+      "src/main.c"
+    ],
+    "directory": "/home/mx/cProg/mxOS/bootloader",
+    "file": "/home/mx/cProg/mxOS/bootloader/src/main.c",
+    "output": "/home/mx/cProg/mxOS/bootloader/src/obj/main.o"
+  }
+]

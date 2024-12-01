@@ -1,0 +1,22 @@
+[
+  {
+    "arguments": [
+      "/home/mx/opt/cross/bin/x86_64-elf-gcc",
+      "-g",
+      "-c",
+      "-std=gnu99",
+      "-ffreestanding",
+      "-fno-common",
+      "-O2",
+      "-mno-red-zone",
+      "-Wall",
+      "-Wextra",
+      "-o",
+      "src/kernel.o",
+      "src/kernel.c"
+    ],
+    "directory": "/home/mx/cProg/mxOS/kernel",
+    "file": "/home/mx/cProg/mxOS/kernel/src/kernel.c",
+    "output": "/home/mx/cProg/mxOS/kernel/src/kernel.o"
+  }
+]

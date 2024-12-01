@@ -13,11 +13,11 @@ DISK_IMG_SIZE:=2880
 
 OVMF_PATH := /usr/share/OVMF
 
-QEMU_FLAGS:=-drive if=pflash,format=raw,unit=0,file=${OVMF_PATH}/OVMF_CODE.fd,readonly=on \
+QEMU_FLAGS:=-cpu qemu64 \
+						-drive if=pflash,format=raw,unit=0,file=${OVMF_PATH}/OVMF_CODE.fd,readonly=on \
   					-drive if=pflash,format=raw,unit=1,file=${OVMF_PATH}/OVMF_VARS.fd,\
-						-device usb-storage,drive=uas-disk1 \
 						-serial stdio \
-						-usb\
+						-usb \
 						-vga std \
 						-net none
 
