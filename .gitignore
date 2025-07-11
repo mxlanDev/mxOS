@@ -30,6 +30,8 @@
 
 # Executables
 *.exe
+*.elf
+*.efi
 *.out
 *.app
 *.i*86
@@ -54,3 +56,10 @@ dkms.conf
 # Cache dirs
 *.cache*
 
+# Build directories
+build
+build
+kernel/build
+kernel/build
+bootloader/build
+bootloader/build
