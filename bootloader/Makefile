@@ -17,6 +17,7 @@ INCLUDE_DIRS:= ${EFI_INC_DIR} \
 INCLUDE_FLAG := $(foreach d, $(INCLUDE_DIRS), -I$d)
 
 CFLAGS := ${INCLUDE_FLAG} \
+	-ggdb \
 	-ffreestanding \
 	-fno-common \
 	-fno-stack-protector \
@@ -50,11 +51,12 @@ OBJECTS := ${OBJ_DIR}/main.o
 BINARY_ELF := ${BUILD_DIR}/bootx64.so
 
 BINARY_EFI := ${BUILD_DIR}/bootx64.efi
+BINARY_EFI_DEBUG := ${BUILD_DIR}/bootx64.efi.debug
 
 
 .PHONY: all clean emu
 
-all: ${BINARY_EFI}
+all: ${BINARY_EFI} ${BINARY_EFI_DEBUG}
 
 ${BINARY_EFI}: ${BINARY_ELF}
 	objcopy -j .text \
@@ -66,6 +68,9 @@ ${BINARY_EFI}: ${BINARY_ELF}
 		-j .rela \
 		-j .reloc \
 		--target=efi-app-${ARCH} $^ $@
+
+${BINARY_EFI_DEBUG}: ${BINARY_ELF}
+	objcopy --only-keep-debug $^ $@
 
 ${BINARY_ELF}: ${BUILD_DIR} ${OBJECTS} 
 	ld ${LDFLAGS} ${OBJECTS} -o $@ -lefi -lgnuefi
@@ -82,5 +87,6 @@ ${OBJ_DIR}:
 clean:
 	rm -f ${OBJECTS}
 	rm -f ${BINARY_ELF}
+	rm -f ${BINARY_ELF_DEBUG}
 	rm -f ${BINARY_EFI}
 	rm -rf ${BUILD_DIR}
