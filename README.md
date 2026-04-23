@@ -34,7 +34,7 @@ A simple kernel and bootloader written in x86 Assembly and C. The master branch 
 ### Master Branch (Legacy BIOS)
 
 ```bash
-git clone https://github.com/mxlanDev/mxOS.git
+git clone https://github.com/exaltdev/mxOS.git
 cd mxOS
 make
 ```
@@ -42,7 +42,7 @@ make
 ### UEFI branch
 
 ```bash
-git clone https://github.com/mxlanDev/mxOS.git
+git clone https://github.com/exaltdev/mxOS.git
 cd mxOS
 git checkout uefi
 make
